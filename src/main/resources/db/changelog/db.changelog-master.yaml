@@ -1,0 +1,91 @@
+databaseChangeLog:
+  - changeSet:
+      id: oauth2 jdbc token store
+      author: gyo
+      changes:
+        - createTable:
+            tableName: oauth_access_token
+            columns:
+              - column:
+                  name: authentication_id
+                  type: varchar(256)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: token_id
+                  type: varchar(256)
+              - column:
+                  name: token
+                  type: bytea
+              - column:
+                  name: user_name
+                  type: varchar(256)
+              - column:
+                  name: client_id
+                  type: varchar(256)
+              - column:
+                  name: authentication
+                  type: bytea
+              - column:
+                  name: refresh_token
+                  type: varchar(256)
+        - createTable:
+            tableName: oauth_refresh_token
+            columns:
+              - column:
+                  name: token_id
+                  type: varchar(256)
+              - column:
+                  name: token
+                  type: bytea
+              - column:
+                  name: authentication
+                  type: bytea
+  - changeSet:
+      id: users store
+      author: gyo
+      changes:
+        - createTable:
+            tableName: app_user
+            columns:
+              - column:
+                  name: user_email
+                  type: varchar(256)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_pass
+                  type: varchar(256)
+              - column:
+                  name: user_role
+                  type: varchar(256)
+  - changeSet:
+      id: insert default users
+      author: gyo
+      changes:
+        - insert:
+            tableName: app_user
+            columns:
+              - column:
+                  name: user_email
+                  value: "admin1@pm.com"
+              - column:
+                  name: user_pass
+                  value: "admin123"
+              - column:
+                  name: user_role
+                  value: "ROLE_ADMIN"
+        - insert:
+            tableName: app_user
+            columns:
+              - column:
+                  name: user_email
+                  value: "user1@pm.com"
+              - column:
+                  name: user_pass
+                  value: "user123"
+              - column:
+                  name: user_role
+                  value: "ROLE_USER"
