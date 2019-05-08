@@ -1,14 +1,14 @@
 package com.shopdirect.forecasting.authorization.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,21 +21,25 @@ import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RestController
-@RequestMapping(value = {"/admin"}, produces = APPLICATION_JSON_VALUE)
+@RequestMapping(value = {"/token"}, produces = APPLICATION_JSON_VALUE)
 @Validated
 public class TokenController {
 
     private final JdbcTemplate jdbc;
 
+    private DefaultTokenServices tokenServices;
+
     @Autowired
-    public TokenController(DataSource dataSource) {
+    public TokenController(DataSource dataSource, DefaultTokenServices tokenServices) {
         this.jdbc = new JdbcTemplate(dataSource);
+        this.tokenServices = tokenServices;
     }
 
-    @RequestMapping(method = GET, path = "/token/list")
+    @RequestMapping(method = GET, path = "/list")
     @ResponseStatus(OK)
     @Secured({"ROLE_ADMIN"})
     public List<String> findAllTokens() {
@@ -55,5 +59,12 @@ public class TokenController {
         }
 
         return null;
+    }
+
+    @RequestMapping(method = DELETE, path = "/revoke")
+    @ResponseStatus(OK)
+    public void revokeToken(Authentication authentication) {
+        final String userToken = ((OAuth2AuthenticationDetails) authentication.getDetails()).getTokenValue();
+        tokenServices.revokeToken(userToken);
     }
 }

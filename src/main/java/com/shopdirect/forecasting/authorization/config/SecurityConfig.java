@@ -29,4 +29,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.authenticationProvider(new DefaultAuthenticationProvider(appUserRepository));
     }
 
+    // Required for H2 Console to work
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception {
+//        http.headers().frameOptions().sameOrigin();
+//        http.csrf().ignoringAntMatchers("/h2-console/**");
+//        http.authorizeRequests().antMatchers("/h2-console/**").permitAll();
+//    }
+
 }

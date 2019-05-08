@@ -42,6 +42,45 @@ databaseChangeLog:
               - column:
                   name: authentication
                   type: bytea
+        - createTable:
+            tableName: oauth_client_details
+            columns:
+              - column:
+                  name: client_id
+                  type: varchar(256)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: resource_ids
+                  type: varchar(256)
+              - column:
+                  name: client_secret
+                  type: varchar(256)
+              - column:
+                  name: scope
+                  type: varchar(256)
+              - column:
+                  name: authorized_grant_types
+                  type: varchar(256)
+              - column:
+                  name: web_server_redirect_uri
+                  type: varchar(256)
+              - column:
+                  name: authorities
+                  type: varchar(256)
+              - column:
+                  name: access_token_validity
+                  type: INTEGER
+              - column:
+                  name: refresh_token_validity
+                  type: INTEGER
+              - column:
+                  name: additional_information
+                  type: varchar(4096)
+              - column:
+                  name: autoapprove
+                  type: varchar(4096)
   - changeSet:
       id: users store
       author: gyo
@@ -89,3 +128,28 @@ databaseChangeLog:
               - column:
                   name: user_role
                   value: "ROLE_USER"
+  - changeSet:
+      id: client details
+      author: gyo
+      changes:
+        - insert:
+            tableName: oauth_client_details
+            columns:
+              - column:
+                  name: client_id
+                  value: my-client
+              - column:
+                  name: client_secret
+                  value: '{noop}my-secret'
+              - column:
+                  name: scope
+                  value: read,write,trust
+              - column:
+                  name: authorized_grant_types
+                  value: password,authorization_code,refresh_token
+              - column:
+                  name: access_token_validity
+                  value: -1
+              - column:
+                  name: refresh_token_validity
+                  value: -1
